@@ -5,6 +5,7 @@ require_once('functions/functions.php');
 class TED_TEDSystem_Overview {
   public static function showOverview(){
 
+
     $db = XenForo_Application::get('db');
     $visitor = XenForo_Visitor::getInstance();
 
@@ -75,6 +76,12 @@ class TED_TEDSystem_Overview {
         case 'tsuid':
           $uid = $_POST['uid'];
           $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `ts_uid` = '".$uid."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
+          $db->query($sql);
+          break;
+        
+        case 'app_link':
+          $app_link = $_POST['app_link'];
+          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `app_link` = '".$app_link."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
           $db->query($sql);
           break;
         
@@ -460,6 +467,24 @@ class TED_TEDSystem_Overview {
             $s.= '<td colspan="2">'.$ts_uid_form.'</td>';
             $s.= '</tr>';
             if (!$ted[0]['ts_uid']) $s.= '<tr><td colspan="4"><span class="error">Please provide a Teamspeak Unique ID.</span></td></tr>';
+
+            $s.= '<tr>';
+            $s.= '<td>Application</td>';
+            $s.= '<td>:</td>';
+            $app_link = $ted[0]['app_link'];
+            $link = '';
+            if ($app_link) $link = '<a href="'.$app_link.'" target="_blank">'.$app_link.'</a><br/>';
+            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST">
+                            <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
+                            <input type="hidden" name="form" value="app_link" />
+                            <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
+                            <input type="textbox" name="app_link" class="app_link" value="" />
+                            <input type="submit" value="Set" class="button button-left">
+                          </form>';
+
+            $s.= '<td colspan="2">'.$link.$ts_uid_form.'</td>';
+            $s.= '</tr>';
+            if (!$ted[0]['app_link']) $s.= '<tr><td colspan="4"><span class="error">Please provide a link to the application.</span></td></tr>';
           }
 
           $s.= '</table>';
