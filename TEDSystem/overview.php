@@ -474,7 +474,7 @@ class TED_TEDSystem_Overview {
             $app_link = $ted[0]['app_link'];
             $link = '';
             if ($app_link) $link = '<a href="'.$app_link.'" target="_blank" class="button button-left">Go to Application</a><br/>';
-            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
+            $app_link_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="app_link" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -482,7 +482,7 @@ class TED_TEDSystem_Overview {
                             <input type="submit" value="Set" class="button button-left">
                           </form>';
 
-            $s.= '<td colspan="2">'.$ts_uid_form.$link.'</td>';
+            $s.= '<td colspan="2">'.$app_link_form.$link.'</td>';
             $s.= '</tr>';
             if (!$ted[0]['app_link']) $s.= '<tr><td colspan="4"><span class="error">Please provide a link to the application.</span></td></tr>';
           }
