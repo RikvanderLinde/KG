@@ -400,7 +400,7 @@ class TED_TEDSystem_Overview {
           $s.= '<td>Game</td>';
           $s.= '<td>:</td>';
           if ($modtools) {
-            $game_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST">
+            $game_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="game" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -436,7 +436,7 @@ class TED_TEDSystem_Overview {
 
           if ($modtools) {
             $enddate = new DateTime($ted[0]['end_date']);
-            $date_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST">
+            $date_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="date" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -456,7 +456,7 @@ class TED_TEDSystem_Overview {
             $s.= '<td>Teamspeak UID</td>';
             $s.= '<td>:</td>';
             $ts_uid = $ted[0]['ts_uid'];
-            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST">
+            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="tsuid" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -473,16 +473,16 @@ class TED_TEDSystem_Overview {
             $s.= '<td>:</td>';
             $app_link = $ted[0]['app_link'];
             $link = '';
-            if ($app_link) $link = '<a href="'.$app_link.'" target="_blank">'.$app_link.'</a><br/>';
-            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST">
+            if ($app_link) $link = '<a href="'.$app_link.'" target="_blank" class="button button-left">Go to Application</a><br/>';
+            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="app_link" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
-                            <input type="textbox" name="app_link" class="app_link" value="" />
+                            <input type="textbox" name="app_link" class="app_link" value="'.$app_link.'" />
                             <input type="submit" value="Set" class="button button-left">
                           </form>';
 
-            $s.= '<td colspan="2">'.$link.$ts_uid_form.'</td>';
+            $s.= '<td colspan="2">'.$ts_uid_form.$link.'</td>';
             $s.= '</tr>';
             if (!$ted[0]['app_link']) $s.= '<tr><td colspan="4"><span class="error">Please provide a link to the application.</span></td></tr>';
           }
@@ -505,7 +505,7 @@ class TED_TEDSystem_Overview {
           }
           $s.= '<tr>';
           $s.= '<td colspan="2">';
-          $s.= '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST">
+          $s.= '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                   <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                   <input type="hidden" name="form" value="comment" />
                   <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
