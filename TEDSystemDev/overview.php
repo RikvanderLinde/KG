@@ -81,7 +81,7 @@ class TED_TEDSystemDev_Overview {
         
         case 'app_link':
           $app_link = $_POST['app_link'];
-          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `app_link` = '".strip_html($app_link)."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
+          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `app_link` = '".$app_link."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
           $db->query($sql);
           break;
         
@@ -478,13 +478,13 @@ class TED_TEDSystemDev_Overview {
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="app_link" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
-                            <input type="textbox" name="uid" class="app_link" value="" />
+                            <input type="textbox" name="app_link" class="app_link" value="" />
                             <input type="submit" value="Set" class="button button-left">
                           </form>';
 
             $s.= '<td colspan="2">'.$link.$ts_uid_form.'</td>';
             $s.= '</tr>';
-            if (!$ted[0]['ts_uid']) $s.= '<tr><td colspan="4"><span class="error">Please provide a link to the application.</span></td></tr>';
+            if (!$ted[0]['app_link']) $s.= '<tr><td colspan="4"><span class="error">Please provide a link to the application.</span></td></tr>';
           }
 
           $s.= '</table>';
