@@ -2,8 +2,12 @@
 
 require_once('functions/functions.php');
 
+
+// class TED_TEDSystemDev_Overview {
 class TED_TEDSystem_Overview {
   public static function showOverview(){
+  // $version = 'tedsystemdev';
+  $version = 'tedsystem';
 
 
     $db = XenForo_Application::get('db');
@@ -51,12 +55,16 @@ class TED_TEDSystem_Overview {
 
       switch ($form) {
         case 'comment':
-          $sql = "INSERT INTO konvictg_xenweb.TEDS_comments (user_id,comment,comment_user) VALUES ('".$_POST['userid']."','".strip_html($_POST['comment'])."','".$visitor->user_id."');";
+          $sql = "INSERT INTO konvictg_xenweb.TEDS_comments (user_id,comment,comment_user) VALUES ('".$_POST['userid']."','".str_replace("'", "''", strip_html($_POST['comment']))."','".$visitor->user_id."');";
           $db->query($sql);
+
+          $url = '/pages/'.$version.'/?user_id='.$_POST['userid'];
+          header("Location: ".$url); /* Redirect browser */
+          exit();
           break;
         
         case 'game':
-          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `game` = '".$_POST['game']."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
+          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `game` = '".clean_SQL($_POST['game'])."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
           $db->query($sql);
           break;
         
@@ -66,7 +74,7 @@ class TED_TEDSystem_Overview {
           if (validateDate($date, 'd-m-Y') || 
               validateDate($date, 'm-d-Y') || 
               validateDate($date, 'Y-m-d')) {
-            $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `end_date` = '".$date."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
+            $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `end_date` = '".clean_SQL($date)."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
             $db->query($sql);
           } else {
             $date_error = '<br><span class="error">Invalid date</span>';
@@ -75,13 +83,13 @@ class TED_TEDSystem_Overview {
         
         case 'tsuid':
           $uid = $_POST['uid'];
-          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `ts_uid` = '".$uid."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
+          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `ts_uid` = '".clean_SQL($uid)."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
           $db->query($sql);
           break;
         
         case 'app_link':
           $app_link = $_POST['app_link'];
-          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `app_link` = '".$app_link."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
+          $sql = "UPDATE `konvictg_xenweb`.`TEDS` SET `app_link` = '".clean_SQL($app_link)."' WHERE `TEDS`.`user_id` = ".$_POST['userid'].";";
           $db->query($sql);
           break;
         
@@ -94,7 +102,14 @@ class TED_TEDSystem_Overview {
     $s = '';
     $s.= '<div class="TED_Overview">';
 
-    // if ($modtools) $s.= '<div class="information">Current Version : v1.0 (RELEASE build)</div>';
+    if ($modtools) $s.= '<div class="information">
+      New version : v1.1.0<br>
+      <br>
+      New Features:<br>
+      - Trials that passed the end date will now appear green in the overview.<br>
+      - Trials are sorted on date.<br>
+      - Gameless filter removed due to unnecessary.
+      </div>';
 
     if (!isset($_REQUEST['user_id'])) {
 
@@ -106,16 +121,10 @@ class TED_TEDSystem_Overview {
                               FROM xf_user
                               WHERE user_group_id = '19'");
 
-      if (isset($_REQUEST['game']) && $_REQUEST['game']) {
-        if ($_REQUEST['game']=='Gameless') {
-          $tedrecords = $db->fetchAll("SELECT user_id,score,game,end_date
-                                       FROM TEDS
-                                       WHERE game = 'NULL'");
-        } else {
-          $tedrecords = $db->fetchAll("SELECT user_id,score,game,end_date
-                                       FROM TEDS
-                                       WHERE game = '".$_REQUEST['game']."'");
-        }
+      if (isset($_REQUEST['game']) && $_REQUEST['game']) {        
+        $tedrecords = $db->fetchAll("SELECT user_id,score,game,end_date
+                                     FROM TEDS
+                                     WHERE game = '".clean_SQL($_REQUEST['game'])."'");
       } else {
         $tedrecords = $db->fetchAll("SELECT user_id,score,game,end_date
                                      FROM TEDS");
@@ -139,7 +148,7 @@ class TED_TEDSystem_Overview {
           make_new_ted($user['user_id']);
         } else {
           if (isset($_REQUEST['game']) && $_REQUEST['game']) {
-            if (!isset($game[$user['user_id']]) && $_REQUEST['game'] !== 'Gameless') continue;
+            if (!isset($game[$user['user_id']])) continue;
           }
 
           $tedinfo = array();
@@ -159,10 +168,9 @@ class TED_TEDSystem_Overview {
       $s.= '<p>There are currently '.count($teds).' trials active.</p>';
 
 
-      $s.= '<div class="filter"><form action="/pages/tedsystem/" method="GET">';
+      $s.= '<div class="filter"><form action="/pages/'.$version.'/" method="GET">';
       $s.= 'Game : <select name="game">
                     <option value=""'.(isset($_REQUEST['game'])&&$_REQUEST['game']==''?' selected':'').'>Show everyone</option>
-                    <option value="Gameless"'.(isset($_REQUEST['game'])&&$_REQUEST['game']=='Gameless'?' selected':'').'>Show gameless</option>
                     <option value="Community Member"'.(isset($_REQUEST['game'])&&$_REQUEST['game']=='Community Member'?' selected':'').'>Community Member</option>
                     <option value="CS:GO"'.(isset($_REQUEST['game'])&&$_REQUEST['game']=='CS:GO'?' selected':'').'>CS:GO</option>
                     <option value="Diablo 3"'.(isset($_REQUEST['game'])&&$_REQUEST['game']=='Diablo 3'?' selected':'').'>Diablo 3</option>
@@ -191,9 +199,25 @@ class TED_TEDSystem_Overview {
       $s.= '<th>End date</th>';
       $s.= '<tr>';
 
+      function sorter($a,$b) {
+        $c = new DateTime($a['end_date']);
+        $d = new DateTime($b['end_date']);
+
+        if ($c>$d) return 1;
+        elseif ($c<$d) return -1;
+        elseif ($c==$d) return 0;
+        else return 0;
+      }
+
+      usort($teds, "sorter");
+
+      $now = new DateTime();
       foreach($teds as $ted) {
-        $s.= '<tr>';
-        $s.= '<td><a href="/pages/tedsystem/?user_id='.$ted['user_id'].'">'.strip_html($ted['username']).'</a></td>';
+        $end_date = new DateTime($ted['end_date']);
+        $class = '';
+        if ($end_date < $now) $class = ' class="end_date_passed"';
+        $s.= '<tr'.$class.'>';
+        $s.= '<td><a href="/pages/'.$version.'/?user_id='.$ted['user_id'].'">'.strip_html($ted['username']).'</a></td>';
         if (isset($ted['game'])) $s.= '<td align="center">'.$ted['game'].'</td>';
         else $s.= '<td align="center"></td>';
 
@@ -292,37 +316,42 @@ class TED_TEDSystem_Overview {
 
               $db->query("UPDATE `TEDS` SET `score`=".$score.", `voters`='".$users_voted."' WHERE `TEDS`.`user_id`=".$user_id.";");
 
-              header("Location: /pages/tedsystem/?user_id=".$user[0]['user_id']); /* Redirect browser */
+              $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
+              header("Location: ".$url); /* Redirect browser */
               exit();
             }
           } elseif (isset($_REQUEST['modaction']) && $modtools) {
             switch ($_REQUEST['modaction']) {
               case 'extend':
                 extend($ted);
-                header("Location: /pages/tedsystem/?user_id=".$user[0]['user_id']); /* Redirect browser */
+                $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
+                header("Location: ".$url); /* Redirect browser */
                 exit();
                 break;
               case 'pass':
                 pass($ted, $user);
-                header("Location: /pages/tedsystem/?user_id=".$user[0]['user_id']); /* Redirect browser */
+                $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
+                header("Location: ".$url); /* Redirect browser */
                 exit();
                 break;
               case 'fail':
                 fail($ted, $user);
-                header("Location: /pages/tedsystem/?user_id=".$user[0]['user_id']); /* Redirect browser */
+                $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
+                header("Location: ".$url); /* Redirect browser */
                 exit();
                 break;
               case 'restart':
                 restart($ted, $user);
-                header("Location: /pages/tedsystem/?user_id=".$user[0]['user_id']); /* Redirect browser */
+                $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
+                header("Location: ".$url); /* Redirect browser */
                 exit();
                 break;
             }
           }
 
           if ($user[0]['display_style_group_id'] == 19) {
-            $up = '<div class="votebutton"><a href="/pages/tedsystem/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            $down = '<div class="votebutton"><a href="/pages/tedsystem/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
+            $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
+            $down = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
           } else {
             $up = '';
             $down = '';
@@ -342,13 +371,13 @@ class TED_TEDSystem_Overview {
 
 
 
-          $s.= '<a class="button" href="/pages/tedsystem/">Go back to overview</a>';
+          $s.= '<a class="button" href="/pages/'.$version.'/">Go back to overview</a>';
           if ($modtools && ($ted[0]['status'] == 0 || $ted[0]['status'] == 4 || $ted[0]['status'] == 1) && $user[0]['display_style_group_id'] == 19) {
-            $s.= '<a class="button extend modbutton" href="/pages/tedsystem/?user_id='.$user[0]['user_id'].'&modaction=extend">EXTEND</a>';
-            $s.= '<a class="button fail modbutton" href="/pages/tedsystem/?user_id='.$user[0]['user_id'].'&modaction=fail">FAIL</a>';
-            $s.= '<a class="button pass modbutton" href="/pages/tedsystem/?user_id='.$user[0]['user_id'].'&modaction=pass">PASS</a>';
+            $s.= '<a class="button extend modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=extend">EXTEND</a>';
+            $s.= '<a class="button fail modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=fail">FAIL</a>';
+            $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=pass">PASS</a>';
           } elseif ($modtools && ($ted[0]['status'] == 3)) {
-            $s.= '<a class="button pass modbutton" href="/pages/tedsystem/?user_id='.$user[0]['user_id'].'&modaction=restart">RESTART TRIAL</a>';
+            $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=restart">RESTART TRIAL</a>';
           }
 
           switch ($ted[0]['status']) {
@@ -400,7 +429,7 @@ class TED_TEDSystem_Overview {
           $s.= '<td>Game</td>';
           $s.= '<td>:</td>';
           if ($modtools) {
-            $game_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
+            $game_form = '<form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="game" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -436,7 +465,7 @@ class TED_TEDSystem_Overview {
 
           if ($modtools) {
             $enddate = new DateTime($ted[0]['end_date']);
-            $date_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
+            $date_form = '<form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="date" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -456,7 +485,7 @@ class TED_TEDSystem_Overview {
             $s.= '<td>Teamspeak UID</td>';
             $s.= '<td>:</td>';
             $ts_uid = $ted[0]['ts_uid'];
-            $ts_uid_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
+            $ts_uid_form = '<form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="tsuid" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -474,7 +503,7 @@ class TED_TEDSystem_Overview {
             $app_link = $ted[0]['app_link'];
             $link = '';
             if ($app_link) $link = '<a href="'.$app_link.'" target="_blank" class="button button-left">Go to Application</a><br/>';
-            $app_link_form = '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
+            $app_link_form = '<form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
                             <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                             <input type="hidden" name="form" value="app_link" />
                             <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -505,7 +534,7 @@ class TED_TEDSystem_Overview {
           }
           $s.= '<tr>';
           $s.= '<td colspan="2">';
-          $s.= '<form action="/pages/tedsystem/?user_id='.$user[0]['user_id'].'" method="POST" class="tedform">
+          $s.= '<form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST">
                   <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                   <input type="hidden" name="form" value="comment" />
                   <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />

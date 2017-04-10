@@ -27,6 +27,11 @@ function strip_html($data) {
   return $data;
 }
 
+function clean_SQL($data) {
+  $data = str_replace("'", "''", $data);
+  return $data;
+}
+
 function validateDate($date, $format = 'Y-m-d H:i:s')
 {
     $d = DateTime::createFromFormat($format, $date);
