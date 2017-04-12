@@ -524,6 +524,7 @@ class TED_TEDSystem_Overview {
             $comment_user = get_user($comment['comment_user']);
 
             if (!$comment_user) continue;
+            if ($comment_user[0]['user_id'] == (string)$visitor->user_id || $modtools = True) continue;//Only see your own comments, or you are staff
 
             $s.= '<tr>';
             $s.= '<td class="username">';
