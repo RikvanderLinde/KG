@@ -399,11 +399,11 @@ class TED_TEDSystemDev_Overview {
           $s.= '<tr>';
           $s.= '<td>Score</td>';
           $s.= '<td>:</td>';
-          $s.= '<td>'.$score.'</td>';
+          $s.= '<td>'.($modtools?$score:'').'</td>';
           $s.= '<td>'.$up.$down.'</td>';
           $s.= '</tr>';
 
-          if ($modtools && voters) {
+          if ($modtools && $voters) {
             $s.= '<tr>';
             $s.= '<td colspan="4">';
             $voters_list = '';
