@@ -106,7 +106,8 @@ class TED_TEDSystemDev_Overview {
       New version : v1.1.2<br>
       <br>
       New Features:<br>
-      - Members can only view theire own comments ^TB
+      - Members can only view their own comments ^TB<br>
+      - Members can not longer see score ^Ladi
       </div>';
 
     if (!isset($_REQUEST['user_id'])) {
