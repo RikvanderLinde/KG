@@ -26,6 +26,8 @@ class TED_TEDSystemDev_Overview {
     if (in_array($visitor->display_style_group_id, $modtools_permissions)) $modtools = True;
     if (in_array($visitor->user_group_id, $modtools_permissions)) $modtools = True;
 
+    if (isset($_REQUEST['modtools']) && $_REQUEST['modtools']==0) $modtools = False; 
+
 
     // Make trials > month inactive guest again.
 
@@ -194,7 +196,7 @@ class TED_TEDSystemDev_Overview {
       $s.= '<tr>';
       $s.= '<th>Username</th>';
       $s.= '<th>Game</th>';
-      $s.= '<th>Balance</th>';
+      if ($modtools) $s.= '<th>Balance</th>';
       $s.= '<th>End date</th>';
       $s.= '<tr>';
 
@@ -220,8 +222,10 @@ class TED_TEDSystemDev_Overview {
         if (isset($ted['game'])) $s.= '<td align="center">'.$ted['game'].'</td>';
         else $s.= '<td align="center"></td>';
 
-        if (isset($ted['balance'])) $s.= '<td align="center">'.$ted['balance'].'</td>';
-        else $s.= '<td align="center">0</td>';
+        if ($modtools) {
+          if (isset($ted['balance'])) $s.= '<td align="center">'.$ted['balance'].'</td>';
+          else $s.= '<td align="center">0</td>';
+        }
 
         if (isset($ted['end_date'])) $s.= '<td align="center">'.$ted['end_date'].'</td>';
         else $s.= '<td align="center"></td>';
@@ -454,7 +458,7 @@ class TED_TEDSystemDev_Overview {
 
             $s.= '<td colspan="2">'.$game_form.'</td>';
           } else {
-            $s.= '<tr><td colspan="2">'.$ted[0]['game'].'</td></tr>';
+            $s.= '<td colspan="2">'.$ted[0]['game'].'</td>';
           }
           $s.= '</tr>';
           if (!$ted[0]['game'] && $modtools) $s.= '<tr><td colspan="4"><span class="error">Please select a game.</span></td></tr>';
