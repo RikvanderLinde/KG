@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 require_once('functions/functions.php');
 
 
@@ -26,7 +28,15 @@ class TED_TEDSystemDev_Overview {
     if (in_array($visitor->display_style_group_id, $modtools_permissions)) $modtools = True;
     if (in_array($visitor->user_group_id, $modtools_permissions)) $modtools = True;
 
-    if (isset($_REQUEST['modtools']) && $_REQUEST['modtools']==0) $modtools = False; 
+    if (isset($_REQUEST['modtools'])) {
+      if ($_REQUEST['modtools']==0) $_SESSION['modtools'] = 0;
+      if ($_REQUEST['modtools']==1) $_SESSION['modtools'] = 1;
+    }
+
+    if(isset($_SESSION['modtools']) && $_SESSION['modtools']==0) {
+      $modtools = False;
+      $debugger = True;
+    }
 
 
     // Make trials > month inactive guest again.
@@ -109,8 +119,17 @@ class TED_TEDSystemDev_Overview {
       <br>
       New Features:<br>
       - Members can only view their own comments ^TB<br>
-      - Members can not longer see score ^Ladi
+      - Members can not longer see score ^Ladi<br>
+      - Debug mode ^Ladi
       </div>';
+
+    if (!isset($_SESSION['modtools']) && ($modtools || $debugger)) {
+      $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=0">DEBUG:Disable Moderator Tools</a>';
+    } elseif (isset($_SESSION['modtools']) && ($modtools || $debugger)) {
+      if ($_SESSION['modtools']==0) $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=1">Enable Moderator Tools</a>';
+      if ($_SESSION['modtools']==1) $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=0">Disable Moderator Tools</a>';
+    }
+
 
     if (!isset($_REQUEST['user_id'])) {
 
