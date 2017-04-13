@@ -112,6 +112,7 @@ class TED_TEDSystemDev_Overview {
     }
 
     $s = '';
+
     $s.= '<div class="TED_Overview">';
 
     if ($modtools) $s.= '<div class="information">
@@ -419,12 +420,25 @@ class TED_TEDSystemDev_Overview {
 
 
           $s.= '<header class="username"><a href="https://www.konvictgaming.com/members/'.$user[0]['user_id'].'"><span class="style'.$user[0]['display_style_group_id'].'">'.strip_html($user[0]['username']).'</span></a>'.$status.'</header>';
+
           $s.= '<table class="details">';
           $s.= '<tr>';
           $s.= '<td>Score</td>';
           $s.= '<td>:</td>';
           $s.= '<td>'.($modtools?$score:'').'</td>';
           $s.= '<td>'.$up.$down.'</td>';
+          //Vote popup
+          $s.= '<div class="popup" style="visibility: hidden">
+	                <span class="popuptext" id="minusVotePopup">
+                        <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST">
+                        <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
+                        <input type="hidden" name="form" value="comment" />
+                        <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
+                        <textarea rows="4" name="comment"></textarea>
+                        <input type="submit" value="Submit" class="button">
+                        </form>
+                    </span>
+                </div>';
           $s.= '</tr>';
 
           if ($modtools && $voters) {
@@ -437,8 +451,14 @@ class TED_TEDSystemDev_Overview {
 
               $vote_user = get_user($vote[1]);
 
-              if ($vote_user && $vote[0]=='up') $voters_list.= '<b class="username"><a href="https://www.konvictgaming.com/members/'.$vote_user[0]['user_id'].'" class="style'.$vote_user[0]['display_style_group_id'].'">'.strip_html($vote_user[0]['username']).'</a> (+)</b>';
-              if ($vote_user && $vote[0]=='down') $voters_list.= '<b class="username"><a href="https://www.konvictgaming.com/members/'.$vote_user[0]['user_id'].'" class="style'.$vote_user[0]['display_style_group_id'].'">'.strip_html($vote_user[0]['username']).'</a> (-)</b>';
+
+              if ($vote_user && $vote[0] == 'up') $voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (+)</b>';
+              if ($vote_user && $vote[0] == 'down') {
+                voteShow();
+
+
+              //$voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (-)</b>';
+              }
               $voters_list.= '<br/>';
 
             }
@@ -572,6 +592,13 @@ class TED_TEDSystemDev_Overview {
     }
 
     $s.= '</div>';
+    $s.= '<script>
+            function voteShow()
+            {
+            var popup = document.getElementById("minusVotePopup");
+            popup.css("visibility","visible");
+            }
+          </script>';
     echo($s);
   }
 }
