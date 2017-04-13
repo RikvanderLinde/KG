@@ -103,12 +103,10 @@ class TED_TEDSystemDev_Overview {
     $s.= '<div class="TED_Overview">';
 
     if ($modtools) $s.= '<div class="information">
-      New version : v1.1.0<br>
+      New version : v1.1.2<br>
       <br>
       New Features:<br>
-      - Trials that passed the end date will now appear green in the overview.<br>
-      - Trials are sorted on date.<br>
-      - Gameless filter removed due to unnecessary.
+      - Members can only view theire own comments ^TB
       </div>';
 
     if (!isset($_REQUEST['user_id'])) {
@@ -524,7 +522,7 @@ class TED_TEDSystemDev_Overview {
             $comment_user = get_user($comment['comment_user']);
 
             if (!$comment_user) continue;
-            if ($comment_user[0]['user_id'] == (string)$visitor->user_id || $modtools = True) continue;//Only see your own comments, or you are staff
+            if ($comment_user[0]['user_id'] !== $visitor->user_id && !$modtools) continue;//Only see your own comments, or you are staff
 
             $s.= '<tr>';
             $s.= '<td class="username">';
