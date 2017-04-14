@@ -428,7 +428,9 @@ class TED_TEDSystemDev_Overview {
           $s.= '<td>'.($modtools?$score:'').'</td>';
           $s.= '<td>'.$up.$down.'</td>';
           //Vote popup
-          $s.= '<div class="popup" style="visibility: hidden">
+          $showPopup = false;
+
+          $s.= '<div class="popup" <?php if ($showPopup===false){?>style="visibility: hidden"><?php
 	                <span class="popuptext" id="minusVotePopup">
                         <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST">
                         <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
@@ -453,8 +455,7 @@ class TED_TEDSystemDev_Overview {
 
 
               if ($vote_user && $vote[0] == 'up') $voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (+)</b>';
-              if ($vote_user && $vote[0] == 'down') {
-                voteShow();
+              if ($vote_user && $vote[0] == 'down') { $showPopup = true;
 
 
               //$voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (-)</b>';
