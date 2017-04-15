@@ -129,6 +129,7 @@ class TED_TEDSystemDev_Overview {
       <br>
       New Features:<br>
       - Members can only view their own comments ^TB<br>
+      - Members have to provide a reason for a downvote ^TB<br>
       - Members can not longer see score ^Ladi<br>
       - Debug mode ^Ladi
       </div>';
