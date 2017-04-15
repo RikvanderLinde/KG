@@ -467,7 +467,7 @@ class TED_TEDSystemDev_Overview {
                         <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                         <input type="hidden" name="form" value="minuscomment" />
                         <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
-                        <textarea rows="4" name="comment" placeholder="Please provide a reason for your downvote.">></textarea>
+                        <textarea rows="4" name="comment" placeholder="Please provide a reason for your downvote."></textarea>
                         <input type="submit" value="Vote" class="button">
                         </form>
                     </span>
