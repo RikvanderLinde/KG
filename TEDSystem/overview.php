@@ -71,6 +71,7 @@ class TED_TEDSystemDev_Overview {
           $db->query($sql);
 
           $url = '/pages/'.$version.'/?user_id='.$_POST['userid'];
+          header("Location: ".$url); /* Redirect browser */
           exit();
           break;
 
@@ -611,7 +612,7 @@ class TED_TEDSystemDev_Overview {
     if (x == "") {
         alert("You need a reason to downvote!");
         return false;
-    }
+    }0
     }';
     $s.= '</script>';
     echo($s);
