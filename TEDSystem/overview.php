@@ -596,7 +596,7 @@ class TED_TEDSystemDev_Overview {
     $s.= '<script type="text/javascript">';
 
     $s.= 'function showInput(){
-      document.getElementById("myPopup").style.visibility = "visible";
+      document.getElementById("popup").style.visibility = "visible";
     }';
 
     $s.= 'function validateForm() {
