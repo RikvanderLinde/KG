@@ -606,7 +606,7 @@ class TED_TEDSystemDev_Overview {
     $s.= '<script type="text/javascript">';
 
     $s.= 'function showInput(){
-      document.getElementById("popup").style.display:block;
+      document.getElementById("popup").style.display = "block";
     }';
 
     $s.= 'function validateForm() {
