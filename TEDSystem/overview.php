@@ -71,7 +71,6 @@ class TED_TEDSystemDev_Overview {
           $db->query($sql);
 
           $url = '/pages/'.$version.'/?user_id='.$_POST['userid'];
-          header("Location: ".$url); /* Redirect browser */
           exit();
           break;
 
@@ -79,7 +78,6 @@ class TED_TEDSystemDev_Overview {
           $sql = "INSERT INTO konvictg_xenweb.TEDS_comments (user_id,comment,comment_user) VALUES ('".$_POST['userid']."','".str_replace("'", "''", strip_html($_POST['comment']))."','".$visitor->user_id."');";
           $db->query($sql);
 
-          //$url = '/pages/'.$version.'/?user_id='.$_POST['userid'];
           $url = '/pages/'.$version.'/?user_id='.$_POST['userid'].'&vote=down';
           header("Location: ".$url); /* Redirect browser */
           exit();
@@ -385,7 +383,6 @@ class TED_TEDSystemDev_Overview {
           if ($user[0]['display_style_group_id'] == 19) {
             $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
             $down = '<div class="votebutton"><a  onclick="showInput()" class="minus">-</div>';
-            //$down = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
           } else {
             $up = '';
             $down = '';
@@ -470,7 +467,7 @@ class TED_TEDSystemDev_Overview {
                         <input type="hidden" name="form" value="minuscomment" />
                         <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
                         <textarea rows="4" name="comment"></textarea>
-                        <input type="submit" value="Submit" class="button">
+                        <input type="submit" value="Vote" class="button">
                         </form>
                     </span>
                 </div>';
