@@ -593,6 +593,8 @@ class TED_TEDSystemDev_Overview {
 
     $s.= '</div>';
 
+    $s.= '<script type="text/javascript">';
+
     $s.= 'function showInput(){
       document.getElementById("myPopup").style.visibility = "visible";
     }';
@@ -604,7 +606,7 @@ class TED_TEDSystemDev_Overview {
         return false;
     }
     }';
-
+    $s.= '</script>';
     echo($s);
   }
 }
