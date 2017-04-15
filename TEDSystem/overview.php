@@ -374,7 +374,7 @@ class TED_TEDSystemDev_Overview {
 
           if ($user[0]['display_style_group_id'] == 19) {
             $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            $down = '<div class="votebutton" onclick="showInput()">test</div>';
+            $down = '<div class="votebutton"><a  onclick="showInput()" class="minus">test</div>';
             //$down = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
           } else {
             $up = '';
@@ -430,7 +430,7 @@ class TED_TEDSystemDev_Overview {
           $s.= '<td>'.$up.$down.'</td>';
           //Vote popup
 
-          $s.= '<div name="negativeVote" class="popup" style="visibility: hidden">
+          $s.= '<div name="negativeVote" id="popup" class="popup" style="visibility: hidden">
 	                <span class="popuptext" id="minusVotePopup">
                         <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" onsubmit="return validateForm()" method="POST">
                         <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
