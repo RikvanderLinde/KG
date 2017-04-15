@@ -70,7 +70,8 @@ class TED_TEDSystemDev_Overview {
           $sql = "INSERT INTO konvictg_xenweb.TEDS_comments (user_id,comment,comment_user) VALUES ('".$_POST['userid']."','".str_replace("'", "''", strip_html($_POST['comment']))."','".$visitor->user_id."');";
           $db->query($sql);
 
-          $url = '/pages/'.$version.'/?user_id='.$_POST['userid'];
+          //$url = '/pages/'.$version.'/?user_id='.$_POST['userid'];
+          $url = '/pages/'.$version.'/?user_id='.$_POST['userid'].'&vote=down';
           header("Location: ".$url); /* Redirect browser */
           exit();
           break;
@@ -374,7 +375,7 @@ class TED_TEDSystemDev_Overview {
 
           if ($user[0]['display_style_group_id'] == 19) {
             $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            $down = '<div class="votebutton"><a  onclick="showInput()" class="minus">test</div>';
+            $down = '<div class="votebutton"><a  onclick="showInput()" class="minus">-</div>';
             //$down = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
           } else {
             $up = '';
@@ -428,20 +429,7 @@ class TED_TEDSystemDev_Overview {
           $s.= '<td>:</td>';
           $s.= '<td>'.($modtools?$score:'').'</td>';
           $s.= '<td>'.$up.$down.'</td>';
-          //Vote popup
 
-          $s.= '<div name="negativeVote" id="popup" class="popup" style="visibility: hidden">
-	                <span class="popuptext" id="minusVotePopup">
-                        <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" onsubmit="return validateForm()" method="POST">
-                        <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
-                        <input type="hidden" name="form" value="comment" />
-                        <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
-                        <textarea rows="4" name="comment"></textarea>
-                        <input type="submit" value="Submit" class="button">
-                        </form>
-                    </span>
-                </div>';
-          $s.= '</tr>';
 
           if ($modtools && $voters) {
             $s.= '<tr>';
@@ -464,6 +452,21 @@ class TED_TEDSystemDev_Overview {
             $s.= '</td>';
             $s.= '</tr>';
           }
+          //Vote popup
+
+          $s.= '<div id="popup" class="popup" style="display:none">
+	                <span class="popuptext" id="minusVotePopup">
+                        <form name="negativeVote" action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" onsubmit="return validateForm()" method="POST">
+                        <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
+                        <input type="hidden" name="form" value="comment" />
+                        <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
+                        <textarea rows="4" name="comment"></textarea>
+                        <input type="submit" value="Submit" class="button">
+                        </form>
+                    </span>
+                </div>';
+          $s.= '</tr>';
+
 
           $s.= '<tr>';
           $s.= '<td>Game</td>';
@@ -594,7 +597,7 @@ class TED_TEDSystemDev_Overview {
     $s.= '<script type="text/javascript">';
 
     $s.= 'function showInput(){
-      document.getElementById("popup").style.visibility = "visible";
+      document.getElementById("popup").style.display:block;
     }';
 
     $s.= 'function validateForm() {
