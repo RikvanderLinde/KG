@@ -374,7 +374,8 @@ class TED_TEDSystemDev_Overview {
 
           if ($user[0]['display_style_group_id'] == 19) {
             $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            $down = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
+            $down = '<div class="votebutton" onclick="showInput()">test</div>';
+            //$down = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=down" class="minus">-</a></div>';
           } else {
             $up = '';
             $down = '';
@@ -454,10 +455,7 @@ class TED_TEDSystemDev_Overview {
 
 
               if ($vote_user && $vote[0] == 'up') $voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (+)</b>';
-              if ($vote_user && $vote[0] == 'down') { showInput();
-
-
-              //$voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (-)</b>';
+              if ($vote_user && $vote[0] == 'down') { $voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (-)</b>';
               }
               $voters_list.= '<br/>';
 
