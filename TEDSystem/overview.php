@@ -428,11 +428,10 @@ class TED_TEDSystemDev_Overview {
           $s.= '<td>'.($modtools?$score:'').'</td>';
           $s.= '<td>'.$up.$down.'</td>';
           //Vote popup
-          $showPopup = false;
 
-          $s.= '<div class="popup" <?php if ($showPopup===false){?>style="visibility: hidden"><?php
+          $s.= '<div name="negativeVote" class="popup" style="visibility: hidden">
 	                <span class="popuptext" id="minusVotePopup">
-                        <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST">
+                        <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" onsubmit="return validateForm()" method="POST">
                         <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                         <input type="hidden" name="form" value="comment" />
                         <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
@@ -455,7 +454,7 @@ class TED_TEDSystemDev_Overview {
 
 
               if ($vote_user && $vote[0] == 'up') $voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (+)</b>';
-              if ($vote_user && $vote[0] == 'down') { $showPopup = true;
+              if ($vote_user && $vote[0] == 'down') { showInput();
 
 
               //$voters_list .= '<b class="username"><a href="https://www.konvictgaming.com/members/' . $vote_user[0]['user_id'] . '" class="style' . $vote_user[0]['display_style_group_id'] . '">' . strip_html($vote_user[0]['username']) . '</a> (-)</b>';
@@ -593,13 +592,19 @@ class TED_TEDSystemDev_Overview {
     }
 
     $s.= '</div>';
-    $s.= '<script>
-            function voteShow()
-            {
-            var popup = document.getElementById("minusVotePopup");
-            popup.css("visibility","visible");
-            }
-          </script>';
+
+    $s.= 'function showInput(){
+      document.getElementById("myPopup").style.visibility = "visible";
+    }';
+
+    $s.= 'function validateForm() {
+    var x = document.forms["negativeVote"]["comment"].value;
+    if (x == "") {
+        alert("You need a reason to downvote!");
+        return false;
+    }
+    }';
+
     echo($s);
   }
 }
