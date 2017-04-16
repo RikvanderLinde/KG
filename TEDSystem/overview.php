@@ -384,7 +384,7 @@ class TED_TEDSystemDev_Overview {
 
           if ($user[0]['display_style_group_id'] == 19) {
             $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            $down = '<div class="votebutton"><a  onclick="showInput()" class="minus">-</div>';
+            $down = '<div class="votebutton"><a  onclick="showInput()" class="minus" style="cursor:pointer;">-</a></div>';
           } else {
             $up = '';
             $down = '';
