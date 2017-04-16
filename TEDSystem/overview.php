@@ -135,7 +135,7 @@ class TED_TEDSystemDev_Overview {
       </div>';
 
     if (!isset($_SESSION['modtools']) && ($modtools || $debugger)) {
-      $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=0">DEBUG:Disable Moderator Tools</a>';
+      $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=0">Disable Moderator Tools</a>';
     } elseif (isset($_SESSION['modtools']) && ($modtools || $debugger)) {
       if ($_SESSION['modtools']==0) $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=1">Enable Moderator Tools</a>';
       if ($_SESSION['modtools']==1) $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=0">Disable Moderator Tools</a>';
