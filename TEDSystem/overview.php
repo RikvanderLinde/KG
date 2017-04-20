@@ -5,11 +5,11 @@ session_start();
 require_once('functions/functions.php');
 
 
-class TED_TEDSystemDev_Overview {
-// class TED_TEDSystem_Overview {
+//class TED_TEDSystemDev_Overview {
+class TED_TEDSystem_Overview {
   public static function showOverview(){
-  $version = 'tedsystemdev';
-  // $version = 'tedsystem';
+  //$version = 'tedsystemdev';
+  $version = 'tedsystem';
 
 
     $db = XenForo_Application::get('db');
