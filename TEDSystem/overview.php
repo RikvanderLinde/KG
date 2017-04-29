@@ -2,15 +2,15 @@
 
 session_start();
 
-require_once('functions/functions.php');
+include('settings.php');
+include('functions/functions.php');
+include('functions/TS3functions.php');
+include('ts3_lib/TeamSpeak3.php');
 
-
-//class TED_TEDSystemDev_Overview {
-class TED_TEDSystem_Overview {
+class TED_TEDSystemDev_Overview {
+//class TED_TEDSystem_Overview {
   public static function showOverview(){
-  //$version = 'tedsystemdev';
-  $version = 'tedsystem';
-
+    global $version;
 
     $db = XenForo_Application::get('db');
     $visitor = XenForo_Visitor::getInstance();
@@ -363,12 +363,14 @@ class TED_TEDSystem_Overview {
                 break;
               case 'pass':
                 pass($ted, $user);
+                PromoteMemberTS3($ted[0]['ts_uid']);
                 $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
                 header("Location: ".$url); /* Redirect browser */
                 exit();
                 break;
               case 'fail':
                 fail($ted, $user);
+                DemoteFailedTS3($ted[0]['ts_uid']);
                 $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
                 header("Location: ".$url); /* Redirect browser */
                 exit();
@@ -405,10 +407,16 @@ class TED_TEDSystem_Overview {
 
 
           $s.= '<a class="button" href="/pages/'.$version.'/">Go back to overview</a>';
-          if ($modtools && ($ted[0]['status'] == 0 || $ted[0]['status'] == 4 || $ted[0]['status'] == 1) && $user[0]['display_style_group_id'] == 19) {
+          if ($modtools && ($ted[0]['status'] == 0 || $ted[0]['status'] == 4 || $ted[0]['status'] == 1 || $user[0]['display_style_group_id'] == 19) && $user[0]['display_style_group_id'] == 19) {
             $s.= '<a class="button extend modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=extend">EXTEND</a>';
             $s.= '<a class="button fail modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=fail">FAIL</a>';
-            $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=pass">PASS</a>';
+            if ($ted[0]['ts_uid'])
+            {
+              $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=pass">PASS</a>';
+            }
+            else {
+              $s.= '<a class="button pass modbutton" style="pointer-events:none" disabled>No UID</a>';
+            }
           } elseif ($modtools && ($ted[0]['status'] == 3)) {
             $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=restart">RESTART TRIAL</a>';
           }
@@ -608,13 +616,6 @@ class TED_TEDSystem_Overview {
       document.getElementById("popup").style.display = "block";
     }';
 
-    $s.= 'function validateForm() {
-    var x = document.forms["negativeVote"]["comment"].value;
-    if (x == "") {
-        alert("You need a reason to downvote!");
-        return false;
-    }0
-    }';
     $s.= '</script>';
     echo($s);
   }
