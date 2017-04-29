@@ -7,8 +7,8 @@ include('functions/functions.php');
 include('functions/TS3functions.php');
 include('ts3_lib/TeamSpeak3.php');
 
-class TED_TEDSystemDev_Overview {
-//class TED_TEDSystem_Overview {
+//class TED_TEDSystemDev_Overview {
+class TED_TEDSystem_Overview {
   public static function showOverview(){
     global $version;
 
@@ -125,13 +125,21 @@ class TED_TEDSystemDev_Overview {
     $s.= '<div class="TED_Overview">';
 
     if ($modtools) $s.= '<div class="information">
-      New version : v1.1.2<br>
+      New version : v1.2.0<br>
       <br>
       New Features:<br>
-      - Members can only view their own comments ^TB<br>
-      - Members have to provide a reason for a downvote ^TB<br>
-      - Members can not longer see score ^Ladi<br>
-      - Debug mode ^Ladi
+      - Trials get promoted/ Demoted on Teamspeak automagically ^TB<br>
+      - UID has to be valid ^TB<br>
+      - Settings things ^Ladi
+      </div>';
+    else $s.= '<div class="information">
+      New version : v1.2.0<br>
+      <br>
+      New Features:<br>
+      - Patch notes for members. (Oops...)<br>
+      - You can only view your own comments<br>
+      - You have to provide a reason for a downvote<br>
+      - You can no longer see trial scores
       </div>';
 
     if (!isset($_SESSION['modtools']) && ($modtools || $debugger)) {
@@ -409,13 +417,13 @@ class TED_TEDSystemDev_Overview {
           $s.= '<a class="button" href="/pages/'.$version.'/">Go back to overview</a>';
           if ($modtools && ($ted[0]['status'] == 0 || $ted[0]['status'] == 4 || $ted[0]['status'] == 1 || $user[0]['display_style_group_id'] == 19) && $user[0]['display_style_group_id'] == 19) {
             $s.= '<a class="button extend modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=extend">EXTEND</a>';
-            $s.= '<a class="button fail modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=fail">FAIL</a>';
-            if ($ted[0]['ts_uid'])
-            {
+            if ($ted[0]['ts_uid'] && substr($ted[0]['ts_uid'],-1) == "=" && strlen($ted[0]['ts_uid']) == 28) {
               $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=pass">PASS</a>';
+              $s.= '<a class="button fail modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=fail">FAIL</a>';
             }
             else {
-              $s.= '<a class="button pass modbutton" style="pointer-events:none" disabled>No UID</a>';
+              $s.= '<a class="button pass modbutton" style="pointer-events:none" disabled>Invalid UID</a>';
+              $s.= '<a class="button fail modbutton" style="pointer-events:none" disabled>Invalid UID</a>';
             }
           } elseif ($modtools && ($ted[0]['status'] == 3)) {
             $s.= '<a class="button pass modbutton" href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&modaction=restart">RESTART TRIAL</a>';
