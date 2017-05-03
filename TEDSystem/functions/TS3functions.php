@@ -16,9 +16,12 @@ function PromoteMemberTS3($clientUID)
     $ts3_VirtualServer = ConnectTS3();
     try {$client = $ts3_VirtualServer->clientGetNameByUid($clientUID);}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2914";}
 
-    try {$member_ServerGroup = $ts3_VirtualServer->serverGroupGetByName("Member");}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2915";}
+    try {$member_ServerGroup = $ts3_VirtualServer->serverGroupGetByName("Members");}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2915";}
     try {$member_ServerGroup->clientAdd($client['cldbid']);}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2916";}
 
+	try {$member_ServerGroup = $ts3_VirtualServer->serverGroupGetByName("Member");}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2916";}
+    try {$member_ServerGroup->clientAdd($client['cldbid']);}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2916";}
+	
     try {$trial_ServerGroup = $ts3_VirtualServer->serverGroupGetByName("Trial");}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2917";}
     try {$trial_ServerGroup->clientDel($client['cldbid']);}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2918";}
 }
