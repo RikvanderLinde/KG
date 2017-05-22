@@ -7,8 +7,8 @@ include('functions/functions.php');
 include('functions/TS3functions.php');
 include('ts3_lib/TeamSpeak3.php');
 
-//class TED_TEDSystemDev_Overview {
-class TED_TEDSystem_Overview {
+class TED_TEDSystemDev_Overview {
+//class TED_TEDSystem_Overview {
   public static function showOverview(){
     global $version;
 
@@ -39,26 +39,6 @@ class TED_TEDSystem_Overview {
     }
 
 
-    // Make trials > month inactive guest again.
-
-    // if ($debugger) {
-
-    //   $outdated = $db->fetchAll("SELECT user_id,username,user_group_id
-    //                             FROM xf_user
-    //                             WHERE user_group_id = '19'
-    //                             AND  `last_activity` < '1483038216'");
-
-    //   foreach ($outdated as $outdated_user) {
-    //     $sql = "UPDATE  `konvictg_xenweb`.`xf_user` SET  `user_group_id` =  '2', `display_style_group_id` =  '2' WHERE  `xf_user`.`user_id` = ".$outdated_user['user_id'].";";
-    //     $db->query($sql);
-    //   }
-
-    // }
-
-
-
-
-
 
     $date_error = '';
 
@@ -79,9 +59,9 @@ class TED_TEDSystem_Overview {
           $sql = "INSERT INTO konvictg_xenweb.TEDS_comments (user_id,comment,comment_user) VALUES ('".$_POST['userid']."','".str_replace("'", "''", strip_html($_POST['comment']))."','".$visitor->user_id."');";
           $db->query($sql);
 
-          $url = '/pages/'.$version.'/?user_id='.$_POST['userid'].'&vote=down';
-          header("Location: ".$url); /* Redirect browser */
-          exit();
+          // $url = '/pages/'.$version.'/?user_id='.$_POST['userid'].'&vote=down';
+          // header("Location: ".$url); /* Redirect browser */
+          // exit();
           break;
 
         case 'game':
@@ -124,23 +104,23 @@ class TED_TEDSystem_Overview {
 
     $s.= '<div class="TED_Overview">';
 
-    if ($modtools) $s.= '<div class="information">
-      New version : v1.2.0<br>
-      <br>
-      New Features:<br>
-      - Trials get promoted/ Demoted on Teamspeak automagically ^TB<br>
-      - UID has to be valid ^TB<br>
-      - Settings things ^Ladi
-      </div>';
-    else $s.= '<div class="information">
-      New version : v1.2.0<br>
-      <br>
-      New Features:<br>
-      - Patch notes for members. (Oops...)<br>
-      - You can only view your own comments<br>
-      - You have to provide a reason for a downvote<br>
-      - You can no longer see trial scores
-      </div>';
+    // if ($modtools) $s.= '<div class="information">
+    //   New version : v1.2.0<br>
+    //   <br>
+    //   New Features:<br>
+    //   - Trials get promoted/ Demoted on Teamspeak automagically ^TB<br>
+    //   - UID has to be valid ^TB<br>
+    //   - Settings things ^Ladi
+    //   </div>';
+    // else $s.= '<div class="information">
+    //   New version : v1.2.0<br>
+    //   <br>
+    //   New Features:<br>
+    //   - Patch notes for members. (Oops...)<br>
+    //   - You can only view your own comments<br>
+    //   - You have to provide a reason for a downvote<br>
+    //   - You can no longer see trial scores
+    //   </div>';
 
     if (!isset($_SESSION['modtools']) && ($modtools || $debugger)) {
       $s.= '<a class="button debug" href="/pages/'.$version.'/?modtools=0">Disable Moderator Tools</a>';
@@ -312,8 +292,8 @@ class TED_TEDSystem_Overview {
           $score = $ted[0]['score'];
           $voters = array();
           $voters = explode(',', $ted[0]['voters']);
-          if (isset($_REQUEST['vote']) && ($_REQUEST['vote']=='up'||$_REQUEST['vote']=='down')) {
-            $vote = $_REQUEST['vote'];
+          if (isset($_POST['vote']) && ($_POST['vote']=='up'||$_POST['vote']=='down')) {
+            $vote = $_POST['vote'];
             $user_id = $_REQUEST['user_id'];
 
 
@@ -393,8 +373,18 @@ class TED_TEDSystem_Overview {
           }
 
           if ($user[0]['display_style_group_id'] == 19) {
-            $up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            $down = '<div class="votebutton"><a  onclick="showInput()" class="minus" style="cursor:pointer;">-</a></div>';
+            //$up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
+            //$up = '<div class="votebutton"><a onclick="vote(1,'.$version.','.$user[0]['user_id'].')" class="plus" style="cursor:pointer;">+</a></div>';
+
+            $up = '<div class="votebutton">
+                    <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST" class="votebutton">
+                    <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
+                    <input type="hidden" name="vote" value="up" />
+                    <input type="submit" value="+" class="plus">
+                    </form>
+                   </div>';
+
+            $down = '<div class="votebutton"><a onclick="showInput()" class="minus" style="cursor:pointer;">-</a></div>';
           } else {
             $up = '';
             $down = '';
@@ -484,6 +474,7 @@ class TED_TEDSystem_Overview {
                         <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />
                         <input type="hidden" name="form" value="minuscomment" />
                         <input type="hidden" name="userid" value="'.$user[0]['user_id'].'" />
+                        <input type="hidden" name="vote" value="down" />
                         <textarea rows="4" name="comment" placeholder="Please provide a reason for your downvote."></textarea>
                         <input type="submit" value="Vote" class="button">
                         </form>
@@ -620,9 +611,18 @@ class TED_TEDSystem_Overview {
 
     $s.= '<script type="text/javascript">';
 
+    // Show the foced input form
     $s.= 'function showInput(){
       document.getElementById("popup").style.display = "block";
     }';
+
+    $s.= 'function validateForm() {
+            var x = document.forms["negativeVote"]["comment"].value;
+            if (x == "") {
+                alert("You need a reason to downvote!");
+                return false;
+            }
+          }';
 
     $s.= '</script>';
     echo($s);
