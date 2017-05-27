@@ -7,8 +7,8 @@ include('functions/functions.php');
 include('functions/TS3functions.php');
 include('ts3_lib/TeamSpeak3.php');
 
-class TED_TEDSystemDev_Overview {
-//class TED_TEDSystem_Overview {
+// class TED_TEDSystemDev_Overview {
+class TED_TEDSystem_Overview {
   public static function showOverview(){
     global $version;
 
@@ -58,10 +58,6 @@ class TED_TEDSystemDev_Overview {
         case 'minuscomment':
           $sql = "INSERT INTO konvictg_xenweb.TEDS_comments (user_id,comment,comment_user) VALUES ('".$_POST['userid']."','".str_replace("'", "''", strip_html($_POST['comment']))."','".$visitor->user_id."');";
           $db->query($sql);
-
-          // $url = '/pages/'.$version.'/?user_id='.$_POST['userid'].'&vote=down';
-          // header("Location: ".$url); /* Redirect browser */
-          // exit();
           break;
 
         case 'game':
@@ -104,14 +100,13 @@ class TED_TEDSystemDev_Overview {
 
     $s.= '<div class="TED_Overview">';
 
-    // if ($modtools) $s.= '<div class="information">
-    //   New version : v1.2.0<br>
-    //   <br>
-    //   New Features:<br>
-    //   - Trials get promoted/ Demoted on Teamspeak automagically ^TB<br>
-    //   - UID has to be valid ^TB<br>
-    //   - Settings things ^Ladi
-    //   </div>';
+    if ($modtools) {
+      $s.= '<div class="information">
+        Teamspeak intergration is down due to technical issues.<br>
+        <br>
+        We apologize for the inconveniently.
+      </div>';
+    }
     // else $s.= '<div class="information">
     //   New version : v1.2.0<br>
     //   <br>
@@ -351,14 +346,14 @@ class TED_TEDSystemDev_Overview {
                 break;
               case 'pass':
                 pass($ted, $user);
-                PromoteMemberTS3($ted[0]['ts_uid']);
+                if ($debugger) PromoteMemberTS3($ted[0]['ts_uid']);
                 $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
                 header("Location: ".$url); /* Redirect browser */
                 exit();
                 break;
               case 'fail':
                 fail($ted, $user);
-                DemoteFailedTS3($ted[0]['ts_uid']);
+                if ($debugger) DemoteFailedTS3($ted[0]['ts_uid']);
                 $url = '/pages/'.$version.'/?user_id='.$user[0]['user_id'];
                 header("Location: ".$url); /* Redirect browser */
                 exit();
@@ -373,9 +368,6 @@ class TED_TEDSystemDev_Overview {
           }
 
           if ($user[0]['display_style_group_id'] == 19) {
-            //$up = '<div class="votebutton"><a href="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'&vote=up" class="plus">+</a></div>';
-            //$up = '<div class="votebutton"><a onclick="vote(1,'.$version.','.$user[0]['user_id'].')" class="plus" style="cursor:pointer;">+</a></div>';
-
             $up = '<div class="votebutton">
                     <form action="/pages/'.$version.'/?user_id='.$user[0]['user_id'].'" method="POST" class="votebutton">
                     <input type="hidden" name="_xfToken" value="'.$visitor->csrf_token_page.'" />

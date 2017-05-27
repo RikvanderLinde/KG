@@ -13,7 +13,7 @@ function ConnectTS3()
 
 function PromoteMemberTS3($clientUID)
 {
-    $ts3_VirtualServer = ConnectTS3();
+    try {$ts3_VirtualServer = ConnectTS3();}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2913";}
     try {$client = $ts3_VirtualServer->clientGetNameByUid($clientUID);}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2914";}
 
     try {$member_ServerGroup = $ts3_VirtualServer->serverGroupGetByName("Members");}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2915";}
@@ -28,7 +28,7 @@ function PromoteMemberTS3($clientUID)
 
 function DemoteFailedTS3($clientUID)
 {
-    $ts3_VirtualServer = ConnectTS3();
+    try {$ts3_VirtualServer = ConnectTS3();}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2920";}
 
     try {$client = $ts3_VirtualServer->clientGetNameByUid($clientUID);}catch(Exception $e){echo "Something went wrong, contact a technician.\nError code:2921";}
 
